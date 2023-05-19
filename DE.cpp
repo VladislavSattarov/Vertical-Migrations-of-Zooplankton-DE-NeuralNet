@@ -1,128 +1,293 @@
 #include "DE.h"
 
-void DE::MakePopulation()
+void DE::MakePopulation(int PopulationSize, Settings sett)
 {
+    if(!N1.empty())
+        N1.clear();
 	for (int i = 0; i < PopulationSize; i++)
 	{
-		N1.push_back(NeuralNet());
-		N1[i].ProcessDay();
-		std::cout << Fit(N1[i]) << "\n";
+        NeuralNet* tmp = new NeuralNet(sett);
+        N1.push_back(tmp);
+        N1[i]->ProcessDay();
 	}
 }
 
-NeuralNet DE::Mutate(int index)
+NeuralNet* DE::Mutate(int index)
 {
-	NeuralNet Y1;
-	NeuralNet Y2;
-	int randindex = rand() % (N1.size());
-	NeuralNet Mutated;
-	while(randindex == index)
+    int randindex = rand() % (N1.size());
+    while(randindex == index)
+    {
+        randindex = rand() % (N1.size());
+    }
+    NeuralNet Y1 = *N1[randindex];
+    NeuralNet Y2 = *N1[index];
+    NeuralNet* Mutated = new NeuralNet(settings);
+    for (int i = 0; i < N1[index]->m_layers.size(); i++)
 	{
-		randindex = rand() % (N1.size());
-	}
-	Y1 = N1[randindex];
-	int tmp = randindex;
-	while (randindex == index || tmp == randindex)
-	{
-		randindex = rand() % (N1.size());
-	}
-	Y2 = N1[randindex];
-	for (int i = 0; i < N1[index].m_layers.size(); i++)
-	{
-		for (int j = 0; j < N1[index].m_layers[i].size(); j++)
+        for (int j = 0; j < N1[index]->m_layers[i].size(); j++)
 		{
-			for (int x = 0; x < N1[index].m_layers[i][j].allConnections.size(); x++)
+            for (int x = 0; x < N1[index]->m_layers[i][j]->allConnections.size(); x++)
 			{
 				
-				Mutated.m_layers[i][j].allConnections[x]->weight = N1[index].m_layers[i][j].allConnections[x]->weight + F * (Y1.m_layers[i][j].allConnections[x]->weight - Y2.m_layers[i][j].allConnections[x]->weight);
+                Mutated->m_layers[i][j]->allConnections[x]->weight = N1[index]->m_layers[i][j]->allConnections[x]->weight + F * (Y1.m_layers[i][j]->allConnections[x]->weight - Y2.m_layers[i][j]->allConnections[x]->weight);
 			}
-			Mutated.m_layers[i][j].bias = N1[index].m_layers[i][j].bias + F * (Y1.m_layers[i][j].bias - Y2.m_layers[i][j].bias);
+            Mutated->m_layers[i][j]->bias = N1[index]->m_layers[i][j]->bias + F * (Y1.m_layers[i][j]->bias - Y2.m_layers[i][j]->bias);
 		}
 	}
-	return Mutated;
+    return Mutated;
 }
 
-void DE::Crossover(NeuralNet mutated)
+void DE::Crossover(NeuralNet* mutated)
 {	
 	for (int i = 0; i < N1.size(); i++)
 	{
-		NeuralNet tmp = N1[i];
-		for (int j = 0; j < N1[i].m_layers.size(); j++)
+        NeuralNet* tmp = new NeuralNet;
+        *tmp = *N1[i];
+        for (int j = 0; j < N1[i]->m_layers.size(); j++)
 		{
-			for (int k = 0; k < N1[i].m_layers[j].size(); k++)
+            for (int k = 0; k < N1[i]->m_layers[j].size(); k++)
 			{
 				if(RandomFloatInRange(0, 1) <= P)
 				{
-					tmp.m_layers[j][k].bias = mutated.m_layers[j][k].bias;
+                    tmp->m_layers[j][k]->bias = mutated->m_layers[j][k]->bias;
 				}
 				else
 				{
-					tmp.m_layers[j][k].bias = N1[i].m_layers[j][k].bias;
+                    tmp->m_layers[j][k]->bias = N1[i]->m_layers[j][k]->bias;
 				}
-				for (int x = 0; x < N1[i].m_layers[j][k].allConnections.size(); x++)
+                for (int x = 0; x < N1[i]->m_layers[j][k]->allConnections.size(); x++)
 				{
 
 				if (RandomFloatInRange(0, 1) <= P)
 				{
-					tmp.m_layers[j][k].allConnections[x]->weight = mutated.m_layers[j][k].allConnections[x]->weight;
+                    tmp->m_layers[j][k]->allConnections[x]->weight = mutated->m_layers[j][k]->allConnections[x]->weight;
 				}
 				else
 				{
-					tmp.m_layers[j][k].allConnections[x]->weight = N1[i].m_layers[j][k].allConnections[x]->weight;
+                    tmp->m_layers[j][k]->allConnections[x]->weight = N1[i]->m_layers[j][k]->allConnections[x]->weight;
 				}
 				}
 			}
 		}
-		N2.push_back(NeuralNet());
+        N2.push_back(tmp);
 	}
-	for (int i = 0; i < N2.size(); i++)
+/*	for (int i = 0; i < N2.size(); i++)
 	{
-		N2[i].ProcessDay();
-	}
+        N2[i]->migrationx1.clear();
+        N2[i]->migrationx2.clear();
+    }*/
 }
 
-void DE::Selection() 
+void DE::Selection(int i, int countop)
 {
+    if(settings.Col)
+    {
+        NeuralNet tmp = *N1[0];
+        if(settings.isDif())
+        {
+        double ic = (double)i/(double)countop;
+        int randC1 = settings.GetC1() + ic * RandomFloatInRange(-5, 5);
+        int randC2 = settings.GetC2() + ic * RandomFloatInRange(-15, 5);
+        int randC3 = settings.GetC3() + ic * RandomFloatInRange(-5, 15);
+        for (int i = 0; i < N1.size(); i++)
+        {
+            N1[i]->settings.SetC1(randC1);
+            N1[i]->settings.SetC2(randC2);
+            N1[i]->settings.SetC3(randC3);
+
+            N2[i]->settings.SetC1(randC1);
+            N2[i]->settings.SetC2(randC2);
+            N2[i]->settings.SetC3(randC3);
+            N1[i]->migrationx1.clear();
+            N1[i]->migrationx2.clear();
+            N2[i]->migrationx1.clear();
+            N2[i]->migrationx2.clear();
+            N1[i]->ProcessDay();
+            N2[i]->ProcessDay();
+            if (Fit(N1[i]) < Fit(N2[i])) // Fit - функция фитнеса
+            {
+                *N1[i] = *N2[i];
+            }
+            if (Fit(&tmp) < Fit(N1[i]))
+            {
+                tmp = *N1[i];
+            }
+        }
+        }
+        else{
+            for (int i = 0; i < N1.size(); i++)
+            {
+                N1[i]->migrationx1.clear();
+                N1[i]->migrationx2.clear();
+                N2[i]->migrationx1.clear();
+                N2[i]->migrationx2.clear();
+                N1[i]->ProcessDay();
+                N2[i]->ProcessDay();
+            }
+            for (int i = 0; i < N1.size(); i++)
+            {
+                for(int x = 0; x < N1[i]->migrationx1.size(); x++)
+                {
+                    N1[i]->localx1.push_back(0);
+                    N1[i]->localx2.push_back(0);
+                    for (int j = 0; j < N1.size(); j++)
+                        {
+                            if(N1[i]->migrationx1[x] < N1[j]->migrationx1[x] + 5 && N1[i]->migrationx1[x] > N1[j]->migrationx1[x] - 5)
+                            {
+                                N1[i]->localx1[x]++;
+                            }
+                            if(N1[i]->migrationx2[x] < N1[j]->migrationx2[x] + 5 && N1[i]->migrationx2[x] > N1[j]->migrationx2[x] - 5)
+                            {
+                                N1[i]->localx2[x]++;
+                            }
+                        }
+                }
+            }
+
+            for (int i = 0; i < N1.size(); i++)
+            {
+                N1[i]->migrationx1.clear();
+                N1[i]->migrationx2.clear();
+                N2[i]->migrationx1.clear();
+                N2[i]->migrationx2.clear();
+                N1[i]->ProcessDay();
+                N2[i]->ProcessDay();
+
+                if (Fit(N1[i]) < Fit(N2[i])) // Fit - функция фитнеса
+                {
+                    *N1[i] = *N2[i];
+                }
+                if (Fit(&tmp) < Fit(N1[i]))
+                {
+                    tmp = *N1[i];
+                }
+            }
+        }
+    }
+    else{
+    NeuralNet tmp = *N1[0];
+    if(settings.isDif())
+    {
+    double ic = (double)i/(double)countop;
+    int randC1 = settings.GetC1() + ic * RandomFloatInRange(-5, 5);
+    int randC2 = settings.GetC2() + ic * RandomFloatInRange(-15, 5);
+    int randC3 = settings.GetC3() + ic * RandomFloatInRange(-5, 15);
 	for (int i = 0; i < N1.size(); i++)
 	{
+        N1[i]->settings.SetC1(randC1);
+        N1[i]->settings.SetC2(randC2);
+        N1[i]->settings.SetC3(randC3);
+
+        N2[i]->settings.SetC1(randC1);
+        N2[i]->settings.SetC2(randC2);
+        N2[i]->settings.SetC3(randC3);
+        N1[i]->migrationx1.clear();
+        N1[i]->migrationx2.clear();
+        N2[i]->migrationx1.clear();
+        N2[i]->migrationx2.clear();
+        N1[i]->ProcessDay();
+        N2[i]->ProcessDay();
 		if (Fit(N1[i]) < Fit(N2[i])) // Fit - функция фитнеса
 		{
-			N1[i] = N2[i];
+            *N1[i] = *N2[i];
 		}
+        if (Fit(&tmp) < Fit(N1[i]))
+        {
+            tmp = *N1[i];
+        }
 	}
+    }
+    else{
+        for (int i = 0; i < N1.size(); i++)
+        {
+            N2[i]->migrationx1.clear();
+            N2[i]->migrationx2.clear();
+            N2[i]->ProcessDay();
+            if (Fit(N1[i]) < Fit(N2[i])) // Fit - функция фитнеса
+            {
+                *N1[i] = *N2[i];
+            }
+            if (Fit(&tmp) < Fit(N1[i]))
+            {
+                tmp = *N1[i];
+            }
+        }
+    }
 
-	N2.clear();
+    Fits.push_back(Fit(&tmp));
+    for (int i = 0; i < N2.size(); i++)
+    {
+        delete N2[i];
+    }
+    N2.clear();
+    }
 
 }
 
-NeuralNet DE::process(int CountOperations)
+NeuralNet DE::process(int CountOperations, int PopulationSize, Settings set)
 {
-	MakePopulation();
+    settings = set;
+    MakePopulation(PopulationSize, settings);
+    NeuralNet tmp = *N1[0];
+    for (int i = 1; i < N1.size(); i++)
+    {
+        if (Fit(&tmp) < Fit(N1[i]))
+        {
+            tmp = *N1[i];
+        }
+    }
+    Fits.push_back(Fit(&tmp));
 	for (int i = 0; i < CountOperations; i++)
 	{
 		Mutated = Mutate(RandomVal(N1.size()));
-		Crossover(Mutated);
-		Selection();
+        Crossover(Mutated);
+        Selection(i, CountOperations);
 	}
-	NeuralNet tmp;
-	tmp = N1[0];
+    tmp = *N1[0];
+    tmp.settings = this->settings;
+    tmp.migrationx1.clear();
+    tmp.migrationx2.clear();
+    tmp.ProcessDay();
 	for (int i = 1; i < N1.size(); i++)
 	{
-		if (Fit(tmp) < Fit(N1[i]))
+        N1[i]->settings = this->settings;
+        N1[i]->migrationx1.clear();
+        N1[i]->migrationx2.clear();
+        N1[i]->ProcessDay();
+        if (Fit(&tmp) < Fit(N1[i]))
 		{
-			tmp = N1[i];
-		}
-
+            tmp = *N1[i];
+        }
 	}
+    Fits.push_back(Fit(&tmp));
 	return tmp;
 }
 
-double DE::Fit(NeuralNet tmp)
+std::vector<NeuralNet*> DE::process(std::vector<NeuralNet*> Pop, int CountOperations, Settings set)
 {
-    double P = 0.0016 * tmp.GetM1() - 0.0000007 * tmp.GetM3() - 0.000016 * tmp.GetM4(); //0.0016, 0.0000007, 0.000016
-    double Q = 0.00008 * tmp.GetM2(); // увеличить, было 0.00008
-	double S = 0.004 * tmp.GetM6();
-    double R = 0.006 * tmp.GetM5() - 0.0000075 * tmp.GetM7() - 0.00006 * tmp.GetM8();
+    settings = set;
+    N1.clear();
+    N2.clear();
+    for(int i = 0; i < Pop.size(); i++)
+    {
+        N1.push_back(Pop[i]);
+        N1[i]->AddColNeurons();
+    }
+    for (int i = 0; i < CountOperations; i++)
+    {
+        Mutated = Mutate(RandomVal(N1.size()));
+        Crossover(Mutated);
+        Selection(i, CountOperations);
+    }
+    return N1;
+}
+
+double DE::Fit(NeuralNet* tmp)
+{
+    double P = alpha_j * tmp->GetM1() - beta_j * tmp->GetM3() - delta_j * tmp->GetM4(); //0.0016, 0.0000007, 0.000016
+    double Q = gamma_j * tmp->GetM2(); // 0.00008
+    double S = gamma_a * tmp->GetM6(); // 0.004
+    double R = alpha_a * tmp->GetM5() - beta_a * tmp->GetM7() - delta_a * tmp->GetM8(); // 0.006, 0.0000075, 0.00006
     return -P - S - Q + sqrt(4 * R * P + pow(P + Q - S, 2));
     //return P + Q + S + R;
 }

@@ -3,7 +3,7 @@
 #include "Neuron.h"
 
 
-typedef std::vector<Neuron> Layer;
+typedef std::vector<Neuron*> Layer;
 
 enum NetInput
 {
@@ -36,96 +36,278 @@ enum NetOutput
 class NeuralNet
 {
 private:
-    double x1 = 0;
-    double x2 = -1;
+    double x1 = -50; //молодые особи начальное положение
+    double x2 = -50; //взрослые особи начальное положение
 	double t = 0;
-	double E(double x)
-	{
-        //return sigma1 * (tanh(e1 * x + C1) + 1);
-        return  (tanh(0.02 * (x + C1)) + 1.)/2.;
-	}
-	double Sx(double x)
-	{
-        //return sigma2 * (tanh(e2 * x + C1) + 1);
-        return (tanh(0.025 * (x + C1)) + 1)/2.;
-	}
-	double St(double t)
-	{
-        //return cos(2 * PI * t) + 1.;
-        return (cos(2 * PI * (t/1440. + 1./2.)) + 1.)/2.;
-	}
-	double G(double x)
-	{
-		return xi1 * pow(eta1, x - C2) + xi2 * pow(eta2, -(x - C3)) / 2;
-	}
 public:
 	std::vector<Layer> m_layers; // m_layers[layerNum][neuronNum]
-
-
+    Settings settings;
+    bool Col =false;
 
 public:
 	std::vector<double> migrationx1;
 	std::vector<int> x1dt;
 	std::vector<double> migrationx2;
 	std::vector<int> x2dt;
-	void Clone(NeuralNet* prototype);
+    void Clone(const NeuralNet &other);
+    std::vector<int> localx1;
+    std::vector<int> localx2;
 
 	NeuralNet()
 	{
-		Layer l1;
+        Layer l1;
 		for (size_t i = 0; i < 8; i++)
 		{
-			l1.push_back(Neuron(input));
+            l1.push_back(new Neuron(input));
 		}
 		Layer l2;
 		for (size_t i = 0; i < 12; i++)
 		{
-			l2.push_back(Neuron(basic));
+            l2.push_back(new Neuron(basic));
 		}
 		Layer l3;
 		for (size_t i = 0; i < 24; i++)
 		{
-			l3.push_back(Neuron(basic));
+            l3.push_back(new Neuron(basic));
 		}
 		Layer l4;
 		for (size_t i = 0; i < 6; i++)
 		{
-			l4.push_back(Neuron(output));
+            l4.push_back(new Neuron(output));
 		}
 		m_layers = { l1, l2, l3, l4};
-		this->FullyConnect(1);
+        for (size_t i = 0; i < 6; i++)
+        {
+            for (size_t j = 0; j < 4; j++)
+            {
+                m_layers[1][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 6; i < 12; i++)
+        {
+            for (size_t j = 4; j < 8; j++)
+            {
+                m_layers[1][i]->AddConnection(j);
+            }
+        }
 		for (size_t i = 0; i < 12; i++)
 		{
 			for (size_t j = 0; j < 6; j++)
 			{
-				m_layers[2][i].AddConnection(j);
+                m_layers[2][i]->AddConnection(j);
 			}
 		}
 		for (size_t i = 12; i < 24; i++)
 		{
 			for (size_t j = 6; j < 12; j++)
 			{
-				m_layers[2][i].AddConnection(j);
+                m_layers[2][i]->AddConnection(j);
 			}
 		}
 		for (size_t i = 0; i < 3; i++)
 		{
 			for (size_t j = 0; j < 12; j++)
 			{
-				m_layers[3][i].AddConnection(j);
+                m_layers[3][i]->AddConnection(j);
 			}
 		}
 		for (size_t i = 3; i < 6; i++)
 		{
 			for (size_t j = 12; j < 24; j++)
 			{
-				m_layers[3][i].AddConnection(j);
+                m_layers[3][i]->AddConnection(j);
 			}
-		}
+        }
+
+
+         /*Layer l1;
+                for (size_t i = 0; i < 8; i++)
+                {
+                    l1.push_back(new Neuron(input));
+                }
+                Layer l2;
+                for (size_t i = 0; i < 24; i++)
+                {
+                    l2.push_back(new Neuron(basic));
+                }
+                Layer l3;
+                for (size_t i = 0; i < 24; i++)
+                {
+                    l3.push_back(new Neuron(basic));
+                }
+                Layer l4;
+                for (size_t i = 0; i < 6; i++)
+                {
+                    l4.push_back(new Neuron(output));
+                }
+                m_layers = { l1, l2, l3, l4};
+                this->FullyConnect(1);
+                for (size_t i = 0; i < 12; i++)
+                {
+                    for (size_t j = 0; j < 12; j++)
+                    {
+                        m_layers[2][i]->AddConnection(j);
+                    }
+                }
+                for (size_t i = 12; i < 24; i++)
+                {
+                    for (size_t j = 12; j < 24; j++)
+                    {
+                        m_layers[2][i]->AddConnection(j);
+                    }
+                }
+                for (size_t i = 0; i < 3; i++)
+                {
+                    for (size_t j = 0; j < 12; j++)
+                    {
+                        m_layers[3][i]->AddConnection(j);
+                    }
+                }
+                for (size_t i = 3; i < 6; i++)
+                {
+                    for (size_t j = 12; j < 24; j++)
+                    {
+                        m_layers[3][i]->AddConnection(j);
+                    }
+                }*/
+        //Settings settings;
 	}
-	NeuralNet(NeuralNet* prototype);
+    NeuralNet(Settings set)
+    {
+        Layer l1;
+        for (size_t i = 0; i < 8; i++)
+        {
+            l1.push_back(new Neuron(input));
+        }
+        Layer l2;
+        for (size_t i = 0; i < 12; i++)
+        {
+            l2.push_back(new Neuron(basic));
+        }
+        Layer l3;
+        for (size_t i = 0; i < 24; i++)
+        {
+            l3.push_back(new Neuron(basic));
+        }
+        Layer l4;
+        for (size_t i = 0; i < 6; i++)
+        {
+            l4.push_back(new Neuron(output));
+        }
+        m_layers = { l1, l2, l3, l4};
+        for (size_t i = 0; i < 6; i++)
+        {
+            for (size_t j = 0; j < 4; j++)
+            {
+                m_layers[1][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 6; i < 12; i++)
+        {
+            for (size_t j = 4; j < 8; j++)
+            {
+                m_layers[1][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 0; i < 12; i++)
+        {
+            for (size_t j = 0; j < 6; j++)
+            {
+                m_layers[2][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 12; i < 24; i++)
+        {
+            for (size_t j = 6; j < 12; j++)
+            {
+                m_layers[2][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 0; i < 3; i++)
+        {
+            for (size_t j = 0; j < 12; j++)
+            {
+                m_layers[3][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 3; i < 6; i++)
+        {
+            for (size_t j = 12; j < 24; j++)
+            {
+                m_layers[3][i]->AddConnection(j);
+            }
+        }
+        /*Layer l1;
+        for (size_t i = 0; i < 8; i++)
+        {
+            l1.push_back(new Neuron(input));
+        }
+        Layer l2;
+        for (size_t i = 0; i < 12; i++)
+        {
+            l2.push_back(new Neuron(basic));
+        }
+        Layer l3;
+        for (size_t i = 0; i < 24; i++)
+        {
+            l3.push_back(new Neuron(basic));
+        }
+        Layer l4;
+        for (size_t i = 0; i < 6; i++)
+        {
+            l4.push_back(new Neuron(output));
+        }
+        m_layers = { l1, l2, l3, l4};
+        this->FullyConnect(1);
+        for (size_t i = 0; i < 12; i++)
+        {
+            for (size_t j = 0; j < 6; j++)
+            {
+                m_layers[2][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 12; i < 24; i++)
+        {
+            for (size_t j = 6; j < 12; j++)
+            {
+                m_layers[2][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 0; i < 3; i++)
+        {
+            for (size_t j = 0; j < 12; j++)
+            {
+                m_layers[3][i]->AddConnection(j);
+            }
+        }
+        for (size_t i = 3; i < 6; i++)
+        {
+            for (size_t j = 12; j < 24; j++)
+            {
+                m_layers[3][i]->AddConnection(j);
+            }
+        }*/
+        settings = set;
+    }
+    NeuralNet(const NeuralNet &other);
 
+    ~NeuralNet() {
+        for (auto layerIt = m_layers.begin(); layerIt != m_layers.end(); ++layerIt) {
+            for (auto neuronIt = layerIt->begin(); neuronIt != layerIt->end(); ++neuronIt) {
+                delete *neuronIt;
+            }
+            layerIt->clear();
+        }
+        m_layers.clear();
+        migrationx1.clear();
+        migrationx2.clear();
+        x1dt.clear();
+        x2dt.clear();
+    }
 
+    void AddColNeurons();
+
+    NeuralNet& operator = (const NeuralNet &other);
 	
 	void Clear();
 
@@ -170,43 +352,68 @@ public:
 	NetOutput GetMaxOutput1();
 	NetOutput GetMaxOutput2();
 
+    void serialize(const std::string& filename) const;
+    NeuralNet deserializeNeuralNet(const std::string& filename);
+
 	Layer GetOutput(); // test
+
+    double Pxt(double x, double t)
+    {
+        return settings.Sx(x) * settings.St(t) / 2;
+    }
 
 	//test
 	double GetFunc(int num)
 	{
 		if (num == 0)
 		{
-			return E(x1);
+            return settings.E(x1);
 		}
 		if (num == 1)
 		{
-			return Sx(x1);
+            //return Pxt(x1, t);
+            return settings.Sx(x1);
 		}
 		if (num == 2)
 		{
-			return St(t);
+            /*if(t = 0)
+                return 0;
+            return Pxt(migrationx1[t-1], t) - Pxt(x1, t);*/
+            return settings.St(t);
 		}
 		if (num == 3)
 		{
-			return G(x1);
+            return settings.G(x1);
 		}
 		if (num == 4)
 		{
-			return E(x2);
+            //return Pxt(x2, t);
+            return settings.E(x2);
 		}
 		if (num == 5)
 		{
-			return Sx(x2);
+            //return Pxt(x2, t);
+            return settings.Sx(x2);
 		}
 		if (num == 6)
 		{
-			return St(t);
+            /*if(t = 0)
+                return 0;
+            return Pxt(migrationx2[t-1], t) - Pxt(x2, t);*/
+            return settings.St(t);
 		}
 		if (num == 7)
 		{
-			return G(x2);
+            return settings.G(x2);
 		}
+        if (num == 8)
+        {
+            return localx1[t];
+        }
+        if (num == 9)
+        {
+            return localx2[t];
+        }
 	}
 
 	double GetM1()
@@ -214,19 +421,30 @@ public:
 		double m = 0;
 		for (int i = 0; i < 1440; i++)
 		{
-			m += E(this->migrationx1[i]);
+            m += settings.E(this->migrationx1[i]);
 		}
         return m;
 	}
 	double GetM2()
 	{
+        if(settings.Col)
+        {
+            double m = 0;
+            for (int i = 0; i < 1440; i++)
+            {
+                m += settings.St(i)*settings.Sx(this->migrationx1[i])/localx1[i];
+            }
+            return m;
+        }
+        else{
 		double m = 0;
 		for (int i = 0; i < 1440; i++)
 		{
             //m += St(this->Gett() + i)*Sx(this->migrationx1[i]);
-            m += St(i)*Sx(this->migrationx1[i]);
+            m += settings.St(i)*settings.Sx(this->migrationx1[i]);
 		}
         return m;
+        }
 	}
 	double GetM3()
 	{
@@ -243,7 +461,7 @@ public:
 		double m = 0;
 		for (int i = 0; i < 1440; i++)
 		{
-			m += G(this->migrationx1[i]);
+            m += settings.G(this->migrationx1[i]);
 		}
         return m;
 	}
@@ -252,17 +470,26 @@ public:
 		double m = 0;
 		for (int i = 0; i < 1440; i++)
 		{
-			m += E(this->migrationx2[i]);
+            m += settings.E(this->migrationx2[i]);
 		}
         return m;
 	}
 	double GetM6()
 	{
+        if(settings.Col)
+        {
+            double m = 0;
+            for (int i = 0; i < 1440; i++)
+            {
+                m += settings.St(i)*settings.Sx(this->migrationx2[i])/localx2[i];
+            }
+            return m;
+        }
 		double m = 0;
 		for (int i = 0; i < 1440; i++)
 		{
             //m += St(this->Gett() + i)*Sx(this->migrationx2[i]);
-            m += St(i)*Sx(this->migrationx2[i]);
+            m += settings.St(i)*settings.Sx(this->migrationx2[i]);
 		}
         return m;
 	}
@@ -281,7 +508,7 @@ public:
 		double m = 0;
 		for (int i = 0; i < 1440; i++)
 		{
-			m += G(this->migrationx2[i]);
+            m += settings.G(this->migrationx2[i]);
 		}
         return m;
 	}
