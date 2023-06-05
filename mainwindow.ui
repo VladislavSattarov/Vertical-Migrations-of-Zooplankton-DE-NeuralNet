@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -822,7 +822,7 @@ p, li { white-space: pre-wrap; }
    </property>
    <widget class="QMenu" name="menuv2">
     <property name="title">
-     <string>2</string>
+     <string>4</string>
     </property>
    </widget>
    <addaction name="menuv2"/>

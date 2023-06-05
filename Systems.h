@@ -146,6 +146,24 @@ Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi
     this->MaxDeep = MaxDeep;
     this->dif = dif;
 }
+
+Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi2, double xi3, double xi4, bool noise, double per, int MaxDeep, bool dif, bool col)
+{
+    this->C1 = C1;
+    this->C2 = C2;
+    this->C3 = C3;
+    this->eta1 = eta1;
+    this->eta2 = eta2;
+    this->xi1 = xi1;
+    this->xi2 = xi2;
+    this->xi3 = xi3;
+    this->xi4 = xi4;
+    this->noise = noise;
+    this->per = per;
+    this->MaxDeep = MaxDeep;
+    this->dif = dif;
+    this->Col = col;
+}
 };
 
 //Get random number (0 to max-1)

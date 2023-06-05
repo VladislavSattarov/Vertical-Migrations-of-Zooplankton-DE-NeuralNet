@@ -35,6 +35,8 @@ NeuralNet::NeuralNet(const NeuralNet &other)
     x1 = other.x1;
     x2 = other.x2;
     t = other.t;
+    if(settings.Col)
+        localx2 = other.localx2;
     m_layers = std::vector<Layer>(other.m_layers.size());
     for(int i = 0; i < other.m_layers.size(); i++)
     {
@@ -64,6 +66,8 @@ NeuralNet& NeuralNet::operator = (const NeuralNet &other)
     x2 = other.x2;
     t = other.t;
     settings = other.settings;
+    if(settings.Col)
+        localx2 = other.localx2;
 
     for(int i = 0; i < m_layers.size(); i++)
     {
@@ -338,25 +342,21 @@ NeuralNet NeuralNet::deserializeNeuralNet(const std::string& filename) {
 
 void NeuralNet::AddColNeurons()
 {
+    settings.Col = true;
     this->m_layers[0].push_back(new Neuron(input));//9
-    this->m_layers[0].push_back(new Neuron(input));//10
     this->m_layers[1].push_back(new Neuron(basic));
-    this->m_layers[1].push_back(new Neuron(basic));
-    this->m_layers[2].push_back(new Neuron(basic));
     this->m_layers[2].push_back(new Neuron(basic));
     m_layers[1][12]->AddConnection(8);
-    m_layers[1][13]->AddConnection(9);
     m_layers[2][24]->AddConnection(12);
-    m_layers[2][25]->AddConnection(13);
     for(int i = 0; i < 3; i++)
     {
     m_layers[3][i]->AddConnection(24);
     }
-    for(int i = 3; i < 6; i++)
+    for(int i = 0; i < 1440; i++)
     {
-    m_layers[3][i]->AddConnection(25);
+
+    localx2.push_back(0);
+
     }
-
-
 }
 

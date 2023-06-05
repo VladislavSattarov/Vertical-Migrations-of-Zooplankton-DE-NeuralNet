@@ -89,6 +89,16 @@ void Neuron::AddConnection(int index)
 	++numConnections;
 }
 
+void Neuron::AddNullConnection(int index)
+{
+    NeuronConnection* tmp = new NeuronConnection();
+    tmp->index = index;
+    tmp->SetNullWeight();
+
+    allConnections.push_back(tmp);
+    ++numConnections;
+}
+
 int Neuron::IsConnected(int index)
 {
 	for (int i = 0; i < numConnections; ++i)
@@ -137,7 +147,10 @@ void NeuronConnection::SetRandomWeight()
 {
 	weight = RandomFloatInRange(ConnectionWeightMin, ConnectionWeightMax);
 }
-
+void NeuronConnection::SetNullWeight()
+{
+    weight = 0;
+}
 double Neuron::ActivationSimple(double value)
 {
 	return (value >= 0.5) ? 1.0 : 0.0;

@@ -241,6 +241,7 @@ void MainWindow::on_pushButton_3_clicked()
 {
     srand(time(0));
     bool noise, dif;
+    bool col = true;
     if(ui->checkBox->isChecked())
         noise = true;
     else
@@ -258,7 +259,7 @@ void MainWindow::on_pushButton_3_clicked()
     N.gamma_a = ui->GA->text().toDouble();
     N.gamma_j = ui->GJ->text().toDouble();
     settings = Settings(ui->c1->text().toInt(), ui->lineEdit_9c2->text().toInt(), ui->lineEdit_10c3->text().toInt(), ui->eta1->text().toDouble(), ui->eta2->text().toDouble(),
-                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif);
+                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif, col);
     for(int i = 0; i < Population.size(); i++)
     {
     Population[i]->settings = settings;
@@ -273,16 +274,16 @@ void MainWindow::on_pushButton_3_clicked()
     for(int i = 0; i < Population.size(); i++)
     {
     ui->widget_7->addGraph();
-    for(int i = 0; i < 1440; i++)
+    for(int j = 0; j < 1440; j++)
     {
-        ui->widget_7->graph(ii)->addData(i, A.migrationx1[i]);
+        ui->widget_7->graph(ii)->addData(j, Population[i]->migrationx1[j]);
     }
     ui->widget_7->graph(ii)->setPen(QPen(QColor(RandomVal(255), RandomVal(255), RandomVal(255))));
     ii++;
     ui->widget_7->addGraph();
-    for(int i = 0; i < 1440; i++)
+    for(int j = 0; j < 1440; j++)
     {
-        ui->widget_7->graph(ii)->addData(i, A.migrationx2[i]);
+        ui->widget_7->graph(ii)->addData(j, Population[i]->migrationx2[j]);
     }
     ui->widget_7->graph(ii)->setPen(QPen(QColor(RandomVal(255), RandomVal(255), RandomVal(255))));
     ii++;
@@ -336,7 +337,7 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_4_clicked()
 {
-    settings.Col = true;
+    bool col = true;
     bool noise, dif;
     if(ui->checkBox->isChecked())
         noise = true;
@@ -355,7 +356,7 @@ void MainWindow::on_pushButton_4_clicked()
     N.gamma_a = ui->GA->text().toDouble();
     N.gamma_j = ui->GJ->text().toDouble();
     settings = Settings(ui->c1->text().toInt(), ui->lineEdit_9c2->text().toInt(), ui->lineEdit_10c3->text().toInt(), ui->eta1->text().toDouble(), ui->eta2->text().toDouble(),
-                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif);
+                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif, col);
     int CDE = ui->line_CDE->text().toInt();
     Population = N.process(Population, CDE, settings);
     ui->widget_7->clearGraphs();
@@ -367,16 +368,16 @@ void MainWindow::on_pushButton_4_clicked()
     for(int i = 0; i < Population.size(); i++)
     {
     ui->widget_7->addGraph();
-    for(int i = 0; i < 1440; i++)
+    for(int j = 0; j < 1440; j++)
     {
-        ui->widget->graph(ii)->addData(i, A.migrationx1[i]);
+        ui->widget_7->graph(ii)->addData(j, Population[i]->migrationx1[j]);
     }
     ui->widget_7->graph(ii)->setPen(QPen(QColor(RandomVal(255), RandomVal(255), RandomVal(255))));
     ii++;
-    ui->widget->addGraph();
-    for(int i = 0; i < 1440; i++)
+    ui->widget_7->addGraph();
+    for(int j = 0; j < 1440; j++)
     {
-        ui->widget->graph(ii)->addData(i, A.migrationx2[i]);
+        ui->widget_7->graph(ii)->addData(j, Population[i]->migrationx2[j]);
     }
     ui->widget_7->graph(ii)->setPen(QPen(QColor(RandomVal(255), RandomVal(255), RandomVal(255))));
     ii++;

@@ -36,13 +36,12 @@ enum NetOutput
 class NeuralNet
 {
 private:
-    double x1 = -50; //молодые особи начальное положение
-    double x2 = -50; //взрослые особи начальное положение
+    double x1 = -10; //молодые особи начальное положение
+    double x2 = -10; //взрослые особи начальное положение
 	double t = 0;
 public:
 	std::vector<Layer> m_layers; // m_layers[layerNum][neuronNum]
     Settings settings;
-    bool Col =false;
 
 public:
 	std::vector<double> migrationx1;
@@ -50,9 +49,7 @@ public:
 	std::vector<double> migrationx2;
 	std::vector<int> x2dt;
     void Clone(const NeuralNet &other);
-    std::vector<int> localx1;
     std::vector<int> localx2;
-
 	NeuralNet()
 	{
         Layer l1;
@@ -408,11 +405,7 @@ public:
 		}
         if (num == 8)
         {
-            return localx1[t];
-        }
-        if (num == 9)
-        {
-            return localx2[t];
+            return localx2[t]/5;
         }
 	}
 
@@ -432,7 +425,7 @@ public:
             double m = 0;
             for (int i = 0; i < 1440; i++)
             {
-                m += settings.St(i)*settings.Sx(this->migrationx1[i])/localx1[i];
+                m += settings.St(i)*settings.Sx(this->migrationx1[i]);
             }
             return m;
         }
@@ -476,12 +469,12 @@ public:
 	}
 	double GetM6()
 	{
-        if(settings.Col)
+        if(settings.Col && !localx2.empty())
         {
             double m = 0;
             for (int i = 0; i < 1440; i++)
             {
-                m += settings.St(i)*settings.Sx(this->migrationx2[i])/localx2[i];
+                m += settings.St(i)*settings.Sx(this->migrationx2[i])/ sqrt(localx2[i]);
             }
             return m;
         }

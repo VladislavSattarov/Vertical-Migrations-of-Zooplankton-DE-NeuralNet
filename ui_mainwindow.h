@@ -604,7 +604,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -701,7 +701,7 @@ public:
         label_32->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"right\"><span style=\" font-weight:600;\">J=</span></p></body></html>", nullptr));
         jlabel2->setText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "\320\241\321\202\321\200\320\260\320\275\320\270\321\206\320\260", nullptr));
-        menuv2->setTitle(QCoreApplication::translate("MainWindow", "2", nullptr));
+        menuv2->setTitle(QCoreApplication::translate("MainWindow", "4", nullptr));
     } // retranslateUi
 
 };

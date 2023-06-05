@@ -22,6 +22,8 @@ NeuralNet* DE::Mutate(int index)
     NeuralNet Y1 = *N1[randindex];
     NeuralNet Y2 = *N1[index];
     NeuralNet* Mutated = new NeuralNet(settings);
+    if(settings.Col)
+        Mutated->AddColNeurons();
     for (int i = 0; i < N1[index]->m_layers.size(); i++)
 	{
         for (int j = 0; j < N1[index]->m_layers[i].size(); j++)
@@ -42,6 +44,8 @@ void DE::Crossover(NeuralNet* mutated)
 	for (int i = 0; i < N1.size(); i++)
 	{
         NeuralNet* tmp = new NeuralNet;
+        if(settings.Col)
+            tmp->AddColNeurons();
         *tmp = *N1[i];
         for (int j = 0; j < N1[i]->m_layers.size(); j++)
 		{
@@ -82,9 +86,12 @@ void DE::Selection(int i, int countop)
 {
     if(settings.Col)
     {
-        NeuralNet tmp = *N1[0];
         if(settings.isDif())
         {
+         NeuralNet tmp = *N1[0];
+            tmp.migrationx1.clear();
+            tmp.migrationx2.clear();
+            tmp.ProcessDay();
         double ic = (double)i/(double)countop;
         int randC1 = settings.GetC1() + ic * RandomFloatInRange(-5, 5);
         int randC2 = settings.GetC2() + ic * RandomFloatInRange(-15, 5);
@@ -128,14 +135,8 @@ void DE::Selection(int i, int countop)
             {
                 for(int x = 0; x < N1[i]->migrationx1.size(); x++)
                 {
-                    N1[i]->localx1.push_back(0);
-                    N1[i]->localx2.push_back(0);
                     for (int j = 0; j < N1.size(); j++)
                         {
-                            if(N1[i]->migrationx1[x] < N1[j]->migrationx1[x] + 5 && N1[i]->migrationx1[x] > N1[j]->migrationx1[x] - 5)
-                            {
-                                N1[i]->localx1[x]++;
-                            }
                             if(N1[i]->migrationx2[x] < N1[j]->migrationx2[x] + 5 && N1[i]->migrationx2[x] > N1[j]->migrationx2[x] - 5)
                             {
                                 N1[i]->localx2[x]++;
@@ -143,6 +144,23 @@ void DE::Selection(int i, int countop)
                         }
                 }
             }
+            for (int i = 0; i < N2.size(); i++)
+            {
+                for(int x = 0; x < N2[i]->migrationx1.size(); x++)
+                {
+                    for (int j = 0; j < N2.size(); j++)
+                        {
+                            if(N2[i]->migrationx2[x] < N1[j]->migrationx2[x] + 5 && N2[i]->migrationx2[x] > N1[j]->migrationx2[x] - 5)
+                            {
+                                N2[i]->localx2[x]++;
+                            }
+                        }
+                }
+            }
+            NeuralNet tmp = *N1[0];
+            tmp.migrationx1.clear();
+            tmp.migrationx2.clear();
+            tmp.ProcessDay();
 
             for (int i = 0; i < N1.size(); i++)
             {
@@ -215,12 +233,12 @@ void DE::Selection(int i, int countop)
     }
 
     Fits.push_back(Fit(&tmp));
+    }
     for (int i = 0; i < N2.size(); i++)
     {
         delete N2[i];
     }
     N2.clear();
-    }
 
 }
 
@@ -277,6 +295,7 @@ std::vector<NeuralNet*> DE::process(std::vector<NeuralNet*> Pop, int CountOperat
     {
         Mutated = Mutate(RandomVal(N1.size()));
         Crossover(Mutated);
+
         Selection(i, CountOperations);
     }
     return N1;
@@ -285,10 +304,10 @@ std::vector<NeuralNet*> DE::process(std::vector<NeuralNet*> Pop, int CountOperat
 double DE::Fit(NeuralNet* tmp)
 {
     double P = alpha_j * tmp->GetM1() - beta_j * tmp->GetM3() - delta_j * tmp->GetM4(); //0.0016, 0.0000007, 0.000016
-    double Q = gamma_j * tmp->GetM2(); // 0.00008
-    double S = gamma_a * tmp->GetM6(); // 0.004
+    double Q = gamma_j * tmp->GetM2(); // 0.00008 Q
+    double S = gamma_a * tmp->GetM6(); // 0.004 S
     double R = alpha_a * tmp->GetM5() - beta_a * tmp->GetM7() - delta_a * tmp->GetM8(); // 0.006, 0.0000075, 0.00006
-    return -P - S - Q + sqrt(4 * R * P + pow(P + Q - S, 2));
+    return P - S - Q + sqrt(4 * R * P + pow(P + Q - S, 2));
     //return P + Q + S + R;
 }
 

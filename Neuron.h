@@ -9,6 +9,7 @@ struct NeuronConnection
 	double weight;
 	void ChangeWeight();
 	void SetRandomWeight();
+    void SetNullWeight();
     NeuronConnection()
     {
         index = 0;
@@ -80,6 +81,8 @@ public:
     void Clone(const Neuron &other);
 
 	void AddConnection(int INDEX);
+
+    void AddNullConnection(int INDEX);
 
 	//void RemoveConnection(int index);
 
