@@ -116,6 +116,7 @@ public:
     QLabel *label_28;
     QLineEdit *DA;
     QCheckBox *checkBox_2;
+    QCheckBox *checkBox_3;
     QWidget *tab_2;
     QCustomPlot *widget_7;
     QWidget *layoutWidget6;
@@ -157,7 +158,7 @@ public:
         widget->setGeometry(QRect(190, 10, 1081, 731));
         layoutWidget = new QWidget(tab_3);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 10, 172, 117));
+        layoutWidget->setGeometry(QRect(10, 10, 172, 119));
         gridLayout_3 = new QGridLayout(layoutWidget);
         gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
         gridLayout_3->setContentsMargins(0, 0, 0, 0);
@@ -496,6 +497,9 @@ public:
         checkBox_2 = new QCheckBox(tab);
         checkBox_2->setObjectName(QString::fromUtf8("checkBox_2"));
         checkBox_2->setGeometry(QRect(250, 330, 241, 31));
+        checkBox_3 = new QCheckBox(tab);
+        checkBox_3->setObjectName(QString::fromUtf8("checkBox_3"));
+        checkBox_3->setGeometry(QRect(250, 360, 181, 19));
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
@@ -595,7 +599,7 @@ public:
         MainWindow->setStatusBar(statusbar);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1286, 21));
+        menuBar->setGeometry(QRect(0, 0, 1286, 20));
         menuv2 = new QMenu(menuBar);
         menuv2->setObjectName(QString::fromUtf8("menuv2"));
         MainWindow->setMenuBar(menuBar);
@@ -604,7 +608,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -689,6 +693,7 @@ public:
         label_28->setText(QCoreApplication::translate("MainWindow", "Delta_A", nullptr));
         DA->setText(QCoreApplication::translate("MainWindow", "0.00006", nullptr));
         checkBox_2->setText(QCoreApplication::translate("MainWindow", "\320\236\320\261\321\203\321\207\320\265\320\275\320\270\320\265 \321\201 \320\270\320\267\320\274\320\265\320\275\321\217\321\216\321\211\320\270\320\274\320\270\321\201\321\217 \320\277\320\260\321\200\320\260\320\274\320\265\321\202\321\200\320\260\320\274\320\270", nullptr));
+        checkBox_3->setText(QCoreApplication::translate("MainWindow", "\320\244\321\203\320\275\320\272\321\206\320\270\321\217 D c Sin", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "\320\244\321\203\320\275\320\272\321\206\320\270\320\270 \321\201\321\200\320\265\320\264\321\213", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "\320\227\320\260\320\263\321\200\321\203\320\267\320\270\321\202\321\214", nullptr));
         SelectedLabel2->setText(QCoreApplication::translate("MainWindow", "\320\227\320\260\320\263\321\200\321\203\320\266\320\265\320\275\320\276:", nullptr));

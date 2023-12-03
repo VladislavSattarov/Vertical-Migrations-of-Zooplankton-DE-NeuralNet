@@ -144,5 +144,6 @@ public:
 	double RadialBasisActivation(double value);
 	double LinearActivation(double value);
 	double SigmoidActivation(double value);
+    double ActivationRelu(double value);
 
 };

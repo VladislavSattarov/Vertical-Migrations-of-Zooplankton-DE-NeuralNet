@@ -73,7 +73,7 @@ public:
             l4.push_back(new Neuron(output));
 		}
 		m_layers = { l1, l2, l3, l4};
-        for (size_t i = 0; i < 6; i++)
+        /*for (size_t i = 0; i < 6; i++)
         {
             for (size_t j = 0; j < 4; j++)
             {
@@ -86,7 +86,8 @@ public:
             {
                 m_layers[1][i]->AddConnection(j);
             }
-        }
+        }*/
+        FullyConnect(1);
 		for (size_t i = 0; i < 12; i++)
 		{
 			for (size_t j = 0; j < 6; j++)

@@ -17,7 +17,7 @@ void MainWindow::on_pushButton_clicked()
 {
     srand(time(0));
     clock_t start = clock();
-    bool noise, dif;
+    bool noise, dif, Sin;
     if(ui->checkBox->isChecked())
         noise = true;
     else
@@ -26,6 +26,10 @@ void MainWindow::on_pushButton_clicked()
         dif = true;
     else
         dif = false;
+    if(ui->checkBox_3->isChecked())
+        Sin = true;
+    else
+        Sin = false;
     N.alpha_j = ui->AJ->text().toDouble();
     N.alpha_a = ui->AA->text().toDouble();
     N.beta_a = ui->BA->text().toDouble();
@@ -35,7 +39,7 @@ void MainWindow::on_pushButton_clicked()
     N.gamma_a = ui->GA->text().toDouble();
     N.gamma_j = ui->GJ->text().toDouble();
     settings = Settings(ui->c1->text().toInt(), ui->lineEdit_9c2->text().toInt(), ui->lineEdit_10c3->text().toInt(), ui->eta1->text().toDouble(), ui->eta2->text().toDouble(),
-                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif);
+                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif, Sin);
     int PS = ui->line_PS->text().toInt();
     int CDE = ui->line_CDE->text().toInt();
     A = N.process(CDE, PS, settings);
@@ -143,7 +147,7 @@ void MainWindow::on_ProcessDayButton_clicked()
 {
     srand(time(0));
     clock_t start = clock();
-    bool noise, dif;
+    bool noise, dif, Sin;
     if(ui->checkBox->isChecked())
         noise = true;
     else
@@ -152,6 +156,10 @@ void MainWindow::on_ProcessDayButton_clicked()
         dif = true;
     else
         dif = false;
+    if(ui->checkBox_3->isChecked())
+        Sin = true;
+    else
+        Sin = false;
     N.alpha_j = ui->AJ->text().toDouble();
     N.alpha_a = ui->AA->text().toDouble();
     N.beta_a = ui->BA->text().toDouble();
@@ -161,7 +169,7 @@ void MainWindow::on_ProcessDayButton_clicked()
     N.gamma_a = ui->GA->text().toDouble();
     N.gamma_j = ui->GJ->text().toDouble();
     settings = Settings(ui->c1->text().toInt(), ui->lineEdit_9c2->text().toInt(), ui->lineEdit_10c3->text().toInt(), ui->eta1->text().toDouble(), ui->eta2->text().toDouble(),
-                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif);
+                        ui->lineEdit_2xi1->text().toDouble(), ui->lineEdit_3xi2->text().toDouble(), ui->lineEdit_4x3->text().toDouble(), ui->lineEdit_5x4->text().toDouble(), noise, ui->lineEdit_11per->text().toDouble(), ui->lineEdit_2maxDeep->text().toInt(), dif, Sin);
     A.settings = settings;
     A.ProcessDay();
     ui->widget->clearGraphs();
@@ -240,7 +248,7 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
     srand(time(0));
-    bool noise, dif;
+    bool noise, dif, Sin;
     bool col = true;
     if(ui->checkBox->isChecked())
         noise = true;
@@ -250,6 +258,10 @@ void MainWindow::on_pushButton_3_clicked()
         dif = true;
     else
         dif = false;
+    if(ui->checkBox_3->isChecked())
+        Sin = true;
+    else
+        Sin = false;
     N.alpha_j = ui->AJ->text().toDouble();
     N.alpha_a = ui->AA->text().toDouble();
     N.beta_a = ui->BA->text().toDouble();
@@ -338,7 +350,7 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_4_clicked()
 {
     bool col = true;
-    bool noise, dif;
+    bool noise, dif, Sin;
     if(ui->checkBox->isChecked())
         noise = true;
     else
@@ -347,6 +359,10 @@ void MainWindow::on_pushButton_4_clicked()
         dif = true;
     else
         dif = false;
+    if(ui->checkBox_3->isChecked())
+        Sin = true;
+    else
+        Sin = false;
     N.alpha_j = ui->AJ->text().toDouble();
     N.alpha_a = ui->AA->text().toDouble();
     N.beta_a = ui->BA->text().toDouble();

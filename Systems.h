@@ -9,7 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include <cstring>
-
+#include <omp.h>
 //Get random float in given range
 inline double RandomFloatInRange(double min, double max)
 {
@@ -73,6 +73,7 @@ class Settings
     double xi1 = 0.02;
     double xi2 = 0.025;
     bool Col = false;
+    bool Sin = false;
 public:
     bool isDif()
     {
@@ -125,12 +126,16 @@ double St(double t)
 }
 double G(double x)
 {
-    return xi3 * pow(eta1, x - C2) + xi4 * pow(eta2, -(x - C3)) / 2;
+    if(Sin == false)
+        return xi3 * pow(eta1, x - C2) + xi4 * pow(eta2, -(x - C3)) / 2;
+    else
+        return pow(sin(x/2), 2) * xi3 * pow(eta1, x - C2) + xi4 * pow(eta2, -(x - C3)) / 2;
+
 }
 Settings()
 {
 }
-Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi2, double xi3, double xi4, bool noise, double per, int MaxDeep, bool dif)
+Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi2, double xi3, double xi4, bool noise, double per, int MaxDeep, bool dif, bool sin)
 {
     this->C1 = C1;
     this->C2 = C2;
@@ -145,9 +150,10 @@ Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi
     this->per = per;
     this->MaxDeep = MaxDeep;
     this->dif = dif;
+    this->Sin = sin;
 }
 
-Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi2, double xi3, double xi4, bool noise, double per, int MaxDeep, bool dif, bool col)
+Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi2, double xi3, double xi4, bool noise, double per, int MaxDeep, bool dif, bool col, bool sin)
 {
     this->C1 = C1;
     this->C2 = C2;
@@ -163,6 +169,7 @@ Settings(int C1, int C2, int C3, double eta1, double eta2, double xi1, double xi
     this->MaxDeep = MaxDeep;
     this->dif = dif;
     this->Col = col;
+    this->Sin = sin;
 }
 };
 

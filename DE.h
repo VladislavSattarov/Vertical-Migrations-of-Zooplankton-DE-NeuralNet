@@ -4,8 +4,8 @@
 class DE
 {
 private:
-    double F = 0.5; // амплитуда возмущений
-    double P = 0.5; // вероятность скрещивания
+    double F = 0.1; // амплитуда возмущений
+    double P = 0.1; // вероятность скрещивания
     std::vector<NeuralNet*> N1; // население предков
     std::vector<NeuralNet*> N2; // население потомков
     NeuralNet* Mutated;

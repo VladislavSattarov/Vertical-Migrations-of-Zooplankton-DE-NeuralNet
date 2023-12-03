@@ -73,10 +73,10 @@ Neuron::~Neuron()
 
 double Neuron::GetValue()
 {
-	if (this->type == input)
+    if (this->type == input)
 		return value;
-	else
-	return SigmoidActivation(value);
+    else
+    return ActivationRelu(value);
 }
 
 void Neuron::AddConnection(int index)
@@ -179,6 +179,16 @@ double Neuron::LinearActivation(double value)
 		value = 0.0;
 
 	return value;
+}
+
+double Neuron::ActivationRelu(double value)
+{
+    if(value > 0)
+    {
+        return  value;
+    }
+    else
+    return 0;
 }
 
 double Neuron::SigmoidActivation(double value) // 1/(1+e^-x)

@@ -37,6 +37,8 @@ private slots:
 
     void on_pushButton_4_clicked();
 
+    void on_checkBox_3_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
 };

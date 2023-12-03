@@ -193,13 +193,14 @@ void NeuralNet::ProcessDay()
 	NetOutput n2 = s21;
 	for (int i = 0; i < 1440 - 1; i++)
 	{
-        this->Sett(this->Gett() + i);
+        //this->Sett(this->Gett() + i);
+        this->Sett(i);
 		Process();
 		n1 = GetMaxOutput1();
 		n2 = GetMaxOutput2();
 		if (n1 == s11)
 		{
-			if (Getx1() > -1)
+            if (Getx1() > -1)
 			{
 				this->Setx1(Getx1());
 			}
@@ -227,7 +228,7 @@ void NeuralNet::ProcessDay()
 		}
 		if (n2 == s21)
 		{
-			if (Getx2() >= -1)
+            if (Getx2() > -1)
 			{
 				this->Setx2(Getx2());
 			}
