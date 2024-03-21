@@ -202,9 +202,9 @@ void DE::Selection(int i, int countop)
     if(settings.isDif())
     {
     double ic = (double)i/(double)countop;
-    int randC1 = settings.GetC1() + RandomFloatInRange(-5, 5);
-    int randC2 = settings.GetC2() + RandomFloatInRange(-30, 10);
-    int randC3 = settings.GetC3() + RandomFloatInRange(-10, 30);
+    int randC1 = settings.GetC1();// + RandomFloatInRange(-5, 5);
+    int randC2 = settings.GetC2();// + RandomFloatInRange(-30, 0);
+    int randC3 = settings.GetC3();// + RandomFloatInRange(0, 30);
     #pragma omp parallel for
     for (int i = 0; i < N1.size(); i++)
     {
@@ -227,9 +227,9 @@ void DE::Selection(int i, int countop)
     FitsN1.push_back(Fit(N1[i]));
     FitsN2.push_back(Fit(N2[i]));
     }
-    randC1 = settings.GetC1() + RandomFloatInRange(-5, 5);
-    randC2 = settings.GetC2() + RandomFloatInRange(-40, 10);
-    randC3 = settings.GetC3() + RandomFloatInRange(-10, 60);
+    randC1 = settings.GetC1() + 10;//RandomFloatInRange(-5, 5);
+    randC2 = settings.GetC2() - 30;//RandomFloatInRange(-30, 0);
+    randC3 = settings.GetC3() + 40;//RandomFloatInRange(0, 30); // ИЗМЕНИЛ
     for (int i = 0; i < N1.size(); i++)
     {
         N1[i]->settings.SetC1(randC1);

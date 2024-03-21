@@ -58,12 +58,12 @@ public:
             l1.push_back(new Neuron(input));
 		}
 		Layer l2;
-		for (size_t i = 0; i < 12; i++)
+        for (size_t i = 0; i < 48; i++)
 		{
             l2.push_back(new Neuron(basic));
 		}
 		Layer l3;
-		for (size_t i = 0; i < 24; i++)
+        for (size_t i = 0; i < 96; i++)
 		{
             l3.push_back(new Neuron(basic));
 		}
@@ -88,7 +88,9 @@ public:
             }
         }*/
         FullyConnect(1);
-		for (size_t i = 0; i < 12; i++)
+        FullyConnect(2);
+        FullyConnect(3);
+        /*for (size_t i = 0; i < 12; i++)
 		{
 			for (size_t j = 0; j < 6; j++)
 			{
@@ -115,7 +117,7 @@ public:
 			{
                 m_layers[3][i]->AddConnection(j);
 			}
-        }
+        }*/
 
 
          /*Layer l1;
